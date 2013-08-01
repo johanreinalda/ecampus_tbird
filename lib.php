@@ -1,0 +1,147 @@
+<?php
+/**
+ * library routines for the eCampus interface
+ *
+ * @package   block_ecampus_tbird
+ * @copyright  2013 Thunderbird School of Global Management
+ * @author     2013 Johan Reinalda
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define('ECAMPUS_ACCESS_URL','https://www.ecampus.com/myaccount/generate-access-code.asp');
+define('ECAMPUS_SSO_POST_URL','https://www.ecampus.com/myaccount/default.asp');
+define('ECAMPUS_ACCESS_CODE_LEN',42);
+define('DATEFORMAT','Y/d/m G:i:s');
+/**
+ * 
+ * @param string $username - the username as known to eCampus, most likely the Moodle username
+ * @param string $error - a string returning an error from eCampus call.
+ * @return string - the 42 character access code as returned from eCampus.
+ */
+function get_eCampus_accesscode($username,&$error)
+{
+	$log = 'user ' . $username;
+	$debug = $log;
+		
+	//new curl resource
+	$c = curl_init();
+	
+	// set URL, etc.
+	$schoolid =  get_config('block_ecampus_tbird','schoolid');
+	$schoolsecret = get_config('block_ecampus_tbird','sharedsecret');
+	$url = ECAMPUS_ACCESS_URL . '?s=' . $schoolid. '&k=' . $schoolsecret . '&studentid=' . $username;
+	$debug .= "\n   URL: " . $url;
+	
+	//bind url to connection
+	curl_setopt($c, CURLOPT_URL, $url);
+	//set timeout (in seconds)
+	curl_setopt($c, CURLOPT_CONNECTTIMEOUT, get_config('block_ecampus_tbird','connectiontimeout'));
+	//force data transfer instead of to stdout
+	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+	//disable SSL cert checking, if needed
+	//curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+	
+	//grab it
+	$accesscode = false;
+	$error = '';
+	if(!$data = curl_exec($c)) {
+		//error
+		$c_errno = curl_errno($c);
+		$log .= ', curl error ' . $c_errno;
+		$debug .= "\n   Curl error: " . $c_errno;
+		$error = 'ERROR: cannot get eCampus access code, curl error ' . $c_errno;
+	} else {
+		//we got something:
+		$log .= ", returned: " . $data;
+		$info = curl_getinfo($c);
+		$debug .= "\n   Returned: " . $data;
+		$debug .= "\n   Took " . $info['total_time'] . " seconds to get access code";
+		//need to parse return data here!
+		if(!strncmp($data,'Error:',6)) {
+			//return string is "Error:xxxxxxxxx"
+			$error = 'ERROR: eCampus returned &quot;' . $data . '&quot;';
+			
+		} elseif(strlen($data) === ECAMPUS_ACCESS_CODE_LEN) {
+			//valid access code will always be 42 characters.
+			$accesscode = $data;
+		} else {
+			//Should not happen, but handle as error!
+			//show only first 1000 characters of page returned, just in case.
+			$error = 'ERROR: eCampus returned invalid page:<p>' . htmlspecialchars(substr($data,0,1000));
+		}
+	}
+	
+	//close it
+	curl_close($c);
+
+	//output log and debug data
+	eCampus_Debug($debug);
+	eCampus_Log($log);
+	
+	return $accesscode;
+}
+
+
+
+/**
+ * render_eCampus_login - function to create the eCampus login form
+ * 
+ * @param string $username - eCampus username
+ * @param string $accessCode - temporary access code for auto-login
+ * @param number $courseID - course ID number for bookshelf with specific course only 
+ * @param boolean $gotoMyAccount - if true, go to top level bookshelf
+ * @return string - contains form for login to eCampus, with javascript for auto-submit.
+ */
+function render_eCampus_login($username,$accesscode,$courseid = 0,$gotoMyAccount = false)
+{
+	$schoolid =  get_config('block_ecampus_tbird','schoolid');
+	
+	$s =  '<form name="ecampusform" method="post" action="' . ECAMPUS_SSO_POST_URL . '">';
+	$s .= '<input type="hidden" name="s" value="' . $schoolid . '"></input>';	//<!-- Required -->
+	$s .= '<input type="hidden" name="accesscode" value="' . $accesscode . '"></input>';	//<!-- Required Access Code obtained from hidden call above -->
+	$s .= '<input type="hidden" name="studentid" value="' . $username . '"></input>';	//<!-- Required -->
+	if(!$gotoMyAccount) {
+		// land on bookshelf, instead of 'My Account' page
+		$s .= '<input type="hidden" name="defaultpage" value="ebookshelf"></input>';	//<!-- Specify ebookshelf for default page if you want them to land on their ebooks page after the auto login occurs.  If this value is not provided, student will land on default my account landing page.  -->
+	}
+	if(!$courseid) {
+		//if course id given, we will go to the books for that specific course, instead of all books in bookshelf
+		$s .= '<input type="hidden" name="courseid" value="' . $courseid . '"></input>';	//<!-- Optional -->
+	}
+	$s .= '<input type="submit" value="' . get_string('clicktoaccessecampus', 'block_ecampus_tbird') . '"/></form>';
+	//if javascript enabled (most browsers), submit immediately to simulate SSO
+	$s .= '<script language="JavaScript">document.ecampusform.submit();</script>';
+	$s .= '<p><noscript>' . get_string('javascriptdisabled', 'block_ecampus_tbird') . '</noscript></p>';
+
+	return $s;
+}
+
+/**
+ * eCampus_debug - simple function to add to the block debug file
+ * @param string $string - string to print to debug file
+ */
+function eCampus_debug($string) {
+	
+	if(get_config('block_ecampus_tbird','enabledebug') and $string <> '') {
+		if($fp = fopen(get_config('block_ecampus_tbird','debugfile'),'a')) {
+			fwrite($fp,date(DATEFORMAT) . ' - ' . $string . "\n");
+			fclose($fp);
+		}
+		//else {//silently ignored!}
+	}
+}
+
+/**
+ * eCampus_log - simple function to add to the block log file
+ * @param string $string - string to print to log file
+ */
+function eCampus_log($string) {
+
+	if(get_config('block_ecampus_tbird','enablelog') and $string <> '') {
+		if($fp = fopen(get_config('block_ecampus_tbird','logfile'),'a')) {
+			fwrite($fp,date(DATEFORMAT) . ' - ' . $string . "\n");
+			fclose($fp);
+		}
+		//else {//silently ignored!}
+	}
+}
