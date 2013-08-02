@@ -92,7 +92,7 @@ class block_ecampus_tbird extends block_base {
         		$passthrough .= '?courseid=' . $COURSE->id;
         	}
         	     
-        	//text or image link ?
+        	//show text or image link for eCampus click-through?
         	$linktype = get_config('block_ecampus_tbird','configlinktype');
         	$linktitle = get_config('block_ecampus_tbird','configlinktitle');
        		$text = '<center><a target="_blank" ';
@@ -103,7 +103,11 @@ class block_ecampus_tbird extends block_base {
         		$text .= get_config('block_ecampus_tbird','configlinktext');
         	} else {
         		//image
-        		$text .= '<img src="' . $CFG->wwwroot.'/blocks/ecampus_tbird/pix/button.png' . '">'; 
+        		$image = $CFG->wwwroot.'/blocks/ecampus_tbird/pix/button.png'; //built-in image
+        		$external = get_config('block_ecampus_tbird','configimageurl');
+        		if(!empty($external))	//use external configured url
+        			$image = $external;
+        		$text .= '<img src="' . $image . '">'; 
         	}
         	$text .= '</a></center>';
         	

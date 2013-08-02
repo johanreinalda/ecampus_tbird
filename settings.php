@@ -24,6 +24,9 @@ if ($ADMIN->fulltree) {
 			get_string('configlinktypedescr', 'block_ecampus_tbird'),
 			'text',	array('text' => get_string('linktypetext', 'block_ecampus_tbird'),'image' => get_string('linktypeimage', 'block_ecampus_tbird'))	));
 			
+	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configimageurl', get_string('configimageurl', 'block_ecampus_tbird'),
+				get_string('configimageurldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
+	
 	$settings->add(new admin_setting_confightmleditor('block_ecampus_tbird/configfooter', get_string('configfooter', 'block_ecampus_tbird'),
 				get_string('configfooterdescr', 'block_ecampus_tbird'),
 				'', PARAM_RAW, 60 ));

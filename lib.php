@@ -49,12 +49,27 @@ function get_eCampus_accesscode($username,&$error)
 		$c_errno = curl_errno($c);
 		$log .= ', curl error ' . $c_errno;
 		$debug .= "\n   Curl error: " . $c_errno;
-		$error = 'ERROR: cannot get eCampus access code, curl error ' . $c_errno;
+		//handle some of most common errors!
+		switch ($c_errno) {
+			case 28:
+				$errorstring = get_string('curlerror_timeout','block_ecampus_tbird');
+				break;
+			case 25:
+			case 53:
+			case 54:
+			case 58:
+			case 59:
+			case 60:
+				$errorstring = get_string('curlerror_ssl','block_ecampus_tbird');
+			default:
+				$errorstring = get_string('curlerror_unknown','block_ecampus_tbird');
+		}
+		$error = get_string('curlerror','block_ecampus_tbird') . ' '. $c_errno . ' - ' . $errorstring;
 	} else {
 		//we got something:
-		$log .= ", returned: " . $data;
+		$log .= ", returned: " . substr($data,0,500); //make sure it is not too long, in case of error
 		$info = curl_getinfo($c);
-		$debug .= "\n   Returned: " . $data;
+		$debug .= "\n   Returned: " . substr($data,0,1000);
 		$debug .= "\n   Took " . $info['total_time'] . " seconds to get access code";
 		//need to parse return data here!
 		if(!strncmp($data,'Error:',6)) {
@@ -67,7 +82,7 @@ function get_eCampus_accesscode($username,&$error)
 		} else {
 			//Should not happen, but handle as error!
 			//show only first 1000 characters of page returned, just in case.
-			$error = 'ERROR: eCampus returned invalid page:<p>' . htmlspecialchars(substr($data,0,1000));
+			$error = get_string('curlerror_invalidpage','block_ecampus_tbird') . '<p>' . htmlspecialchars(substr($data,0,1000));
 		}
 	}
 	
@@ -87,12 +102,12 @@ function get_eCampus_accesscode($username,&$error)
  * render_eCampus_login - function to create the eCampus login form
  * 
  * @param string $username - eCampus username
- * @param string $accessCode - temporary access code for auto-login
- * @param number $courseID - course ID number for bookshelf with specific course only 
- * @param boolean $gotoMyAccount - if true, go to top level bookshelf
+ * @param string $accesscode - temporary access code for auto-login
+ * @param number $courseid - course ID number for bookshelf with specific course only 
+ * @param boolean $gotomyaccount - if true, go to top level bookshelf
  * @return string - contains form for login to eCampus, with javascript for auto-submit.
  */
-function render_eCampus_login($username,$accesscode,$courseid = 0,$gotoMyAccount = false)
+function render_eCampus_login($username,$accesscode,$courseid = 0,$gotomyaccount = false)
 {
 	$schoolid =  get_config('block_ecampus_tbird','schoolid');
 	
@@ -100,11 +115,11 @@ function render_eCampus_login($username,$accesscode,$courseid = 0,$gotoMyAccount
 	$s .= '<input type="hidden" name="s" value="' . $schoolid . '"></input>';	//<!-- Required -->
 	$s .= '<input type="hidden" name="accesscode" value="' . $accesscode . '"></input>';	//<!-- Required Access Code obtained from hidden call above -->
 	$s .= '<input type="hidden" name="studentid" value="' . $username . '"></input>';	//<!-- Required -->
-	if(!$gotoMyAccount) {
+	if(!$gotomyaccount) {
 		// land on bookshelf, instead of 'My Account' page
 		$s .= '<input type="hidden" name="defaultpage" value="ebookshelf"></input>';	//<!-- Specify ebookshelf for default page if you want them to land on their ebooks page after the auto login occurs.  If this value is not provided, student will land on default my account landing page.  -->
 	}
-	if(!$courseid) {
+	if($courseid) {
 		//if course id given, we will go to the books for that specific course, instead of all books in bookshelf
 		$s .= '<input type="hidden" name="courseid" value="' . $courseid . '"></input>';	//<!-- Optional -->
 	}
