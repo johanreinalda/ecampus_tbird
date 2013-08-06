@@ -125,7 +125,7 @@ function render_eCampus_login($username,$accesscode,$courseid = 0,$gotomyaccount
 	}
 	$s .= '<input type="submit" value="' . get_string('clicktoaccessecampus', 'block_ecampus_tbird') . '"/></form>';
 	//if javascript enabled (most browsers), submit immediately to simulate SSO
-	$s .= '<script language="JavaScript">document.ecampusform.submit();</script>';
+	//$s .= '<script language="JavaScript">document.ecampusform.submit();</script>';
 	$s .= '<p><noscript>' . get_string('javascriptdisabled', 'block_ecampus_tbird') . '</noscript></p>';
 
 	return $s;
