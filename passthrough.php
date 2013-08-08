@@ -71,8 +71,6 @@ if($mcourseid <> 0) {	//did we pass in a Moodle courseid ?
 	$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 }
 
-$studentid = '1234';
-
 //get the eCampus pass-through temporary access code
 $error;
 $accesscode = get_eCampus_accesscode($studentid,&$error);
