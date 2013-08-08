@@ -12,15 +12,16 @@ define('ECAMPUS_ACCESS_URL','https://www.ecampus.com/myaccount/generate-access-c
 define('ECAMPUS_SSO_POST_URL','https://www.ecampus.com/myaccount/default.asp');
 define('ECAMPUS_ACCESS_CODE_LEN',42);
 define('DATEFORMAT','Y/d/m G:i:s');
+
 /**
  * 
- * @param string $username - the username as known to eCampus, most likely the Moodle username
+ * @param string $studentid - the student id as known to eCampus, could be moodle username, studentid or email
  * @param string $error - a string returning an error from eCampus call.
  * @return string - the 42 character access code as returned from eCampus.
  */
-function get_eCampus_accesscode($username,&$error)
+function get_eCampus_accesscode($studentid,&$error)
 {
-	$log = 'user ' . $username;
+	$log = 'user ' . $studentid;
 	$debug = $log;
 		
 	//new curl resource
@@ -29,7 +30,7 @@ function get_eCampus_accesscode($username,&$error)
 	// set URL, etc.
 	$schoolid =  get_config('block_ecampus_tbird','schoolid');
 	$schoolsecret = get_config('block_ecampus_tbird','sharedsecret');
-	$url = ECAMPUS_ACCESS_URL . '?s=' . $schoolid. '&k=' . $schoolsecret . '&studentid=' . $username;
+	$url = ECAMPUS_ACCESS_URL . '?s=' . $schoolid. '&k=' . $schoolsecret . '&studentid=' . $studentid;
 	$debug .= "\n   URL: " . $url;
 	
 	//bind url to connection
@@ -96,25 +97,23 @@ function get_eCampus_accesscode($username,&$error)
 	return $accesscode;
 }
 
-
-
 /**
  * render_eCampus_login - function to create the eCampus login form
  * 
- * @param string $username - eCampus username
+ * @param string $studentid - eCampus username
  * @param string $accesscode - temporary access code for auto-login
  * @param number $courseid - course ID number for bookshelf with specific course only 
  * @param boolean $gotomyaccount - if true, go to top level bookshelf
  * @return string - contains form for login to eCampus, with javascript for auto-submit.
  */
-function render_eCampus_login($username,$accesscode,$courseid = 0,$gotomyaccount = false)
+function render_eCampus_login($studentid,$accesscode,$courseid = 0,$gotomyaccount = false)
 {
 	$schoolid =  get_config('block_ecampus_tbird','schoolid');
 	
 	$s =  '<form name="ecampusform" method="post" action="' . ECAMPUS_SSO_POST_URL . '">';
 	$s .= '<input type="hidden" name="s" value="' . $schoolid . '"></input>';	//<!-- Required -->
 	$s .= '<input type="hidden" name="accesscode" value="' . $accesscode . '"></input>';	//<!-- Required Access Code obtained from hidden call above -->
-	$s .= '<input type="hidden" name="studentid" value="' . $username . '"></input>';	//<!-- Required -->
+	$s .= '<input type="hidden" name="studentid" value="' . $studentid . '"></input>';	//<!-- Required -->
 	if(!$gotomyaccount) {
 		// land on bookshelf, instead of 'My Account' page
 		$s .= '<input type="hidden" name="defaultpage" value="ebookshelf"></input>';	//<!-- Specify ebookshelf for default page if you want them to land on their ebooks page after the auto login occurs.  If this value is not provided, student will land on default my account landing page.  -->
@@ -125,8 +124,8 @@ function render_eCampus_login($username,$accesscode,$courseid = 0,$gotomyaccount
 	}
 	$s .= '<input type="submit" value="' . get_string('clicktoaccessecampus', 'block_ecampus_tbird') . '"/></form>';
 	//if javascript enabled (most browsers), submit immediately to simulate SSO
-	//$s .= '<script language="JavaScript">document.ecampusform.submit();</script>';
-	$s .= '<p><noscript>' . get_string('javascriptdisabled', 'block_ecampus_tbird') . '</noscript></p>';
+	$s .= '<script language="JavaScript">document.ecampusform.submit();</script>';
+	$s .= '<noscript><p>' . get_string('javascriptdisabled', 'block_ecampus_tbird') . '</p></noscript>';
 
 	return $s;
 }

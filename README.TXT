@@ -36,6 +36,10 @@ HOW TO CHANGE LOGO:
 If you want your own logo, either set the config setting "Image URL",
 or update the file "ecampus_tbird/pix/button.png".
 
+LICENSE:
+This module is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, dated 29 June 2007
+See the LICENSE.txt included for specific terms.
+
 VERSION CHANGES:
 
 2012080201 - Initial version
