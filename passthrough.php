@@ -25,10 +25,12 @@ switch($useridtype) {
 			$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 			$PAGE->set_title(get_string('errorpagetitle','block_ecampus_tbird'));
 			echo $OUTPUT->header();
+			//the textual error explanations
+			$errorheader = get_string('erroroccured','block_ecampus_tbird');
 			$error = get_string('erroruseridnumbernotset','block_ecampus_tbird');
-			echo '<p>' . get_string('erroroccured','block_ecampus_tbird') . '<p>';
-			echo '<p>' . get_string('errorcontactadmin','block_ecampus_tbird') . '<p>';
-			echo '<p><font color="red">' . $error . '</font></p>';
+			//call generic error rendering
+			echo render_eCampus_error($errorheader,$error);
+			//and log this
 			add_to_log($mcourseid, 'ecampus_tbird','error','blocks/ecampus_tbird/README.TXT',$error);
 			echo $OUTPUT->footer();
 			exit;
@@ -36,6 +38,7 @@ switch($useridtype) {
 		$studentid = $USER->idnumber;
 		break;
 	case 'email':
+		//mandatory fields, not error checking needed!
 		$studentid = $USER->email;
 		break;
 	case 'username':
@@ -68,6 +71,8 @@ if($mcourseid <> 0) {	//did we pass in a Moodle courseid ?
 	$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 }
 
+$studentid = '1234';
+
 //get the eCampus pass-through temporary access code
 $error;
 $accesscode = get_eCampus_accesscode($studentid,&$error);
@@ -83,9 +88,7 @@ if($accesscode) {
 	// unrecoverable errors have occured
 	$PAGE->set_title(get_string('errorpagetitle','block_ecampus_tbird'));
 	echo $OUTPUT->header();
-	echo '<p>' . get_string('erroroccured','block_ecampus_tbird') . '<p>';
-	echo '<p>' . get_string('errorcontactadmin','block_ecampus_tbird') . '<p>';
-	echo '<p><font color="red">' . $error . '</font></p>';
+	echo render_eCampus_error(get_string('erroroccured','block_ecampus_tbird'),$error);
 	add_to_log($mcourseid, 'ecampus_tbird','error','blocks/ecampus_tbird/README.TXT',substr($error,0,200));
 }
 echo $OUTPUT->footer();

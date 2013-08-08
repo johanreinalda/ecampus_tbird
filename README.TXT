@@ -29,18 +29,28 @@ USAGE:
 Contact your eCampus rep, and add you eCampus School ID, and your Secret Key.
 Configure other settings as desired.
 	
-BUGS / TODO:
+BUGS/TODO:
 currently, the custom content of this block is NOT saved when a course is exported.
 
 HOW TO CHANGE LOGO:
-If you want your own logo, either set the config setting "Image URL",
-or update the file "ecampus_tbird/pix/button.png".
+If you want your own logo, either set the config settings for image urls,
+or update the files "ecampus_tbird/pix/button.png" and "mybutton.png"
 
-LICENSE:
-This module is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, dated 29 June 2007
+COPYRIGHT LICENSE:
+This module is Copyright(c) 2013 onward, Thunderbird School of Global Management, with portions
+contributed/copyrighted by many others (see the Moodle Developer credits and the Moodle source code itself)
+and all of it is provided under the terms of the GPL.
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation, version 3, dated 29 June 2007.
+
 See the LICENSE.txt included for specific terms.
 
-VERSION CHANGES:
+WARRANTY:
+This module is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License included in LICENSE.txt for
+more details.
 
-2012080201 - Initial version
+VERSION CHANGES:
+2013080801 - Initial version
 

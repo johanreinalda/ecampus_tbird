@@ -10,36 +10,42 @@ if ($ADMIN->fulltree) {
 
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configtitle', get_string('configtitle', 'block_ecampus_tbird'),
 				get_string('configtitledescr', 'block_ecampus_tbird'),
-				get_string('configtitledefault', 'block_ecampus_tbird'), PARAM_RAW, 30 ));
+				'', PARAM_RAW, 30 ));
 
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configlinktext', get_string('configlinktext', 'block_ecampus_tbird'),
 				get_string('configlinktextdescr', 'block_ecampus_tbird'),
 				get_string('configlinktextdefault', 'block_ecampus_tbird'), PARAM_RAW, 30 ));
-	
+
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configlinktitle', get_string('configlinktitle', 'block_ecampus_tbird'),
 				get_string('configlinktitledescr', 'block_ecampus_tbird'),
 				get_string('configlinktitledefault', 'block_ecampus_tbird'), PARAM_RAW, 60 ));
-	
+
 	$settings->add(new admin_setting_configselect('block_ecampus_tbird/configlinktype',get_string('configlinktype', 'block_ecampus_tbird'),
 			get_string('configlinktypedescr', 'block_ecampus_tbird'),
 			'text',
 			array(	'text' => get_string('linktypetext', 'block_ecampus_tbird'),
 					'image' => get_string('linktypeimage', 'block_ecampus_tbird'))
 			));
-			
+
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configimageurl', get_string('configimageurl', 'block_ecampus_tbird'),
 				get_string('configimageurldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
-	
+
+	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configmyimageurl', get_string('configmyimageurl', 'block_ecampus_tbird'),
+				get_string('configmyimageurldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
+
 	$settings->add(new admin_setting_confightmleditor('block_ecampus_tbird/configfooter', get_string('configfooter', 'block_ecampus_tbird'),
 				get_string('configfooterdescr', 'block_ecampus_tbird'),
 				'', PARAM_RAW, 60 ));
 
+	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configcontacturl', get_string('configcontacturl', 'block_ecampus_tbird'),
+				get_string('configcontacturldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
+
 	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/configallownewtitle', get_string('configallownewtitle', 'block_ecampus_tbird'),
 			get_string('configallownewtitledescr', 'block_ecampus_tbird'), 0));
-	
+
 	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/configallowcustom', get_string('configallowcustom', 'block_ecampus_tbird'),
 			get_string('configallowcustomdescr', 'block_ecampus_tbird'), 0));
-	
+
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/schoolid', get_string('configschoolid', 'block_ecampus_tbird'),
 				get_string('configschooliddescr', 'block_ecampus_tbird'), '', PARAM_RAW, 10 ));
 
@@ -66,14 +72,14 @@ if ($ADMIN->fulltree) {
 
 	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/enablelog', get_string('configenablelog', 'block_ecampus_tbird'),
 				get_string('configenablelogdescr', 'block_ecampus_tbird'), 0));
-	
+
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/logfile', get_string('configlogfile', 'block_ecampus_tbird'),
 			get_string('configlogfiledescr', 'block_ecampus_tbird'), '', PARAM_RAW, 60 ));
-	
+
 	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/enabledebug', get_string('configenabledebug', 'block_ecampus_tbird'),
 			get_string('configenabledebugdescr', 'block_ecampus_tbird'), 0));
-	
+
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/debugfile', get_string('configdebugfile', 'block_ecampus_tbird'),
 			get_string('configdebugfiledescr', 'block_ecampus_tbird'), '', PARAM_RAW, 60 ));
-	
+
 }

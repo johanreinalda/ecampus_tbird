@@ -10,7 +10,6 @@
  *
  */
 
-
 //see block development at: http://docs.moodle.org/dev/Blocks
 //database interface is defined in /lib/dml/moodle_database.php
 
@@ -44,11 +43,12 @@ class block_ecampus_tbird extends block_base {
 		return true;
 	}
 
-	//only show in courses and My Moodle page
+	//only show in courses, front page, and My Moodle page
     function applicable_formats() {
         return array(
         		'course-view' => true,
-				'my' => true);
+				'my' => true,
+        		'site-index' => true);
     }
 
     //this class is called immediately after object is instantiated.
@@ -86,10 +86,25 @@ class block_ecampus_tbird extends block_base {
         } else {
         	//the eCampus pass-through page link
         	$passthrough = $CFG->wwwroot.'/blocks/ecampus_tbird/passthrough.php';
-        	//add "courseid" for courses that have external SA system "courseid" set
+        	//add "courseid" for courses
         	global $COURSE;
-        	if (!empty($COURSE) and $COURSE->idnumber <> '') {
+        	if (empty($COURSE) or $COURSE->id == 1) {
+        		//not in course context, but Front Page or My Moodle.
+        		$external = get_config('block_ecampus_tbird','configmyimageurl');
+        		if(!empty($external)) {	//use external configured image url for 'Front Page' or 'My' block view
+        			$image = $external;
+        		} else {
+	        		$image = $CFG->wwwroot.'/blocks/ecampus_tbird/pix/mybutton.png'; //built-in image
+    	    	}
+        	} else {
+        		//in course context
         		$passthrough .= '?courseid=' . $COURSE->id;
+        		$external = get_config('block_ecampus_tbird','configimageurl');
+        		if(!empty($external)) {	//use external configured url for course block
+        			$image = $external;
+        		} else {
+        			$image = $CFG->wwwroot.'/blocks/ecampus_tbird/pix/button.png'; //built-in image
+        		}
         	}
         	     
         	//show text or image link for eCampus click-through?
@@ -103,10 +118,6 @@ class block_ecampus_tbird extends block_base {
         		$text .= get_config('block_ecampus_tbird','configlinktext');
         	} else {
         		//image
-        		$image = $CFG->wwwroot.'/blocks/ecampus_tbird/pix/button.png'; //built-in image
-        		$external = get_config('block_ecampus_tbird','configimageurl');
-        		if(!empty($external))	//use external configured url
-        			$image = $external;
         		$text .= '<img src="' . $image . '">'; 
         	}
         	$text .= '</a></center>';
