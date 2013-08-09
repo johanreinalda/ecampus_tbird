@@ -48,7 +48,8 @@ class block_ecampus_tbird extends block_base {
         return array(
         		'course-view' => true,
 				'my' => true,
-        		'site-index' => true);
+        		'site-index' => true	//front page
+        		);
     }
 
     //this class is called immediately after object is instantiated.
@@ -110,7 +111,7 @@ class block_ecampus_tbird extends block_base {
         	//show text or image link for eCampus click-through?
         	$linktype = get_config('block_ecampus_tbird','configlinktype');
         	$linktitle = get_config('block_ecampus_tbird','configlinktitle');
-       		$text = '<center><a target="_blank" ';
+       		$text = '<p><center><a target="_blank" ';
        		if(!empty($linktitle))
        			$text .= 'title="' . $linktitle . '" ';
        		$text .= 'href="' . $passthrough . '">';
@@ -120,7 +121,7 @@ class block_ecampus_tbird extends block_base {
         		//image
         		$text .= '<img src="' . $image . '">'; 
         	}
-        	$text .= '</a></center>';
+        	$text .= '</a></center></p>';
         	
         	//add instance content, if allowed and set
         	if(get_config('block_ecampus_tbird','configallowcustom')) {
@@ -140,11 +141,11 @@ class block_ecampus_tbird extends block_base {
      * Serialize and store config data
      */
     function instance_config_save($data, $nolongerused = false) {
-    	global $DB;
+    	//global $DB;
     
-    	$config = clone($data);
-    	// Move embedded files into a proper filearea and adjust HTML links to match
-    	$config->text = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_html', 'content', 0, array('subdirs'=>true), $data->text['text']);
+		$config = clone($data);
+ 		// Move embedded files into a proper filearea and adjust HTML links to match
+		$config->text = file_save_draft_area_files($data->text['itemid'], $this->context->id, 'block_ecampus_tbird', 'content', 0, array('subdirs'=>true), $data->text['text']);
     	$config->format = $data->text['format'];
     
     	parent::instance_config_save($config, $nolongerused);
@@ -153,7 +154,7 @@ class block_ecampus_tbird extends block_base {
     function instance_delete() {
     	global $DB;
     	$fs = get_file_storage();
-    	$fs->delete_area_files($this->context->id, 'block_html');
+    	$fs->delete_area_files($this->context->id, 'block_ecampus_tbird');
     	return true;
     }
     
