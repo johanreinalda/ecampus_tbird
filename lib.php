@@ -11,7 +11,7 @@
 define('ECAMPUS_ACCESS_URL','https://www.ecampus.com/myaccount/generate-access-code.asp');
 define('ECAMPUS_SSO_POST_URL','https://www.ecampus.com/myaccount/default.asp');
 define('ECAMPUS_ACCESS_CODE_LEN',42);
-define('DATEFORMAT','Y/d/m G:i:s');
+define('DATEFORMAT','Y/m/d G:i:s');
 
 /**
  * 
