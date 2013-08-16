@@ -139,18 +139,8 @@ function render_eCampus_login($studentid,$accesscode,$courseid = 0,$gotomyaccoun
 function render_eCampus_error($header,$error) {
 	
 	$s = '<p>' . $header . '<p>';
-	$contacturl = get_config('block_ecampus_tbird','configcontacturl');
-	if(!empty($contacturl)) {
-		$linktitle = get_string('contacturllinktitle','block_ecampus_tbird');
-		$contact = '<a target="_blank" title="' . $linktitle . '" href="' . $contacturl . '">';
-		$contact .= get_string('errorcontactadmin','block_ecampus_tbird');
-		$contact .= '</a>';
-	} else {
-		$contact = get_string('errorcontactadmin','block_ecampus_tbird');
-	}
-	$s .= '<p>' . $contact . '</p>';
-	$s .= '<p>' . get_string('erroradmininforequest','block_ecampus_tbird') . '<p>';
 	$s .= '<p><font color="red">' . $error . '</font></p>';
+	$s .= '<p>' . get_config('block_ecampus_tbird','configcustomerrormsg') . '<p>';
 	return $s;	
 }
 

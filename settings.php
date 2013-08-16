@@ -37,8 +37,9 @@ if ($ADMIN->fulltree) {
 				get_string('configfooterdescr', 'block_ecampus_tbird'),
 				'', PARAM_RAW, 60 ));
 
-	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configcontacturl', get_string('configcontacturl', 'block_ecampus_tbird'),
-				get_string('configcontacturldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
+	$settings->add(new admin_setting_confightmleditor('block_ecampus_tbird/configcustomerrormsg', get_string('configcustomerrormsg', 'block_ecampus_tbird'),
+				get_string('configcustomerrormsgdescr', 'block_ecampus_tbird'),
+				get_string('configdefaulterrormsg','block_ecampus_tbird'), PARAM_RAW, 60, 16 ));
 
 	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/configallownewtitle', get_string('configallownewtitle', 'block_ecampus_tbird'),
 			get_string('configallownewtitledescr', 'block_ecampus_tbird'), 0));
