@@ -13,6 +13,12 @@ The course id passed to eCampus is the Moodle course 'idnumber' field, which is 
 PREREQUISITES:
 -Moodle 2.3 or later
 -your PHP install needs to have the 'curl' extension loaded!
+ edit your php.ini file, and remove the semi-colon to enable a line like this:
+    ;extension=php_curl.dll
+    OR
+    ;extension=php_curl.so
+ You will probably have to restart your web server service for this change to go into effect.
+ For more on cURL with php, see http://www.php.net/curl
 
 NOTE:
 This block is tested in Moodle v2.3 and v2.4 only!, but should work in later versions as well.
