@@ -16,11 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_ecampus_tbird', language 'en', branch 'MOODLE_20_STABLE'
+ * trings for component 'block_ecampus_tbird', language 'en'
  *
- * @package   block_ecampus_tbird
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    block_ecampus_tbird
+ * @copyright  Thunderbird School of Global Management
+ * @author	   2013 Johan Reinalda
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['pluginname'] = 'eCampus';
