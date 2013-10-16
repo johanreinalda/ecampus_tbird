@@ -90,4 +90,7 @@ $string['curlerror_timeout'] = 'Connection Timeout';
 $string['curlerror_ssl'] = 'SSL related error';
 $string['curlerror_unknown'] = 'Unknown';
 $string['curlerror_invalidpage'] = 'ERROR: eCampus returned invalid page';
+$string['ecampus_tbird:addinstance'] = 'Add a new eCampus block';
+$string['ecampus_tbird:myaddinstance'] = 'Add a new eCampus block to My home';
+
 
