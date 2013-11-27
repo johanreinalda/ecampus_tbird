@@ -35,6 +35,8 @@ require_once('lib.php');
 //ini_set('display_startup_errors', TRUE);
 
 $mcourseid = optional_param('courseid', 0, PARAM_INT);		// this is optional, the Moodle $course->id
+$isbn = optional_param('isbn', 0, PARAM_INT);		// this is optional, a book ISBN number
+$pagenumber = optional_param('pagenumber', 0, PARAM_INT);	// this is optional, a page in the book
 
 require_login();
 
@@ -42,33 +44,21 @@ $PAGE->set_url('/blocks/ecampus_tbird/passthrough.php', array('courseid' => $mco
 $PAGE->set_pagelayout('base');
 
 //figure out what user attribute we pass as studentid to eCampus
-$useridtype = get_config('block_ecampus_tbird','configuseridtype');
-switch($useridtype) {
-	case 'idnumber':
-		if($USER->idnumber === '') {
-			// unrecoverable errors have occured
-			$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
-			$PAGE->set_title(get_string('errorpagetitle','block_ecampus_tbird'));
-			echo $OUTPUT->header();
-			//the textual error explanations
-			$errorheader = get_string('erroroccured','block_ecampus_tbird');
-			$error = get_string('erroruseridnumbernotset','block_ecampus_tbird');
-			//call generic error rendering
-			echo render_eCampus_error($errorheader,$error);
-			//and log this
-			add_to_log($mcourseid, 'ecampus_tbird','error','blocks/ecampus_tbird/README.TXT',$error);
-			echo $OUTPUT->footer();
-			exit;
-		}
-		$studentid = $USER->idnumber;
-		break;
-	case 'email':
-		//mandatory fields, not error checking needed!
-		$studentid = $USER->email;
-		break;
-	case 'username':
-		$studentid = $USER->username;
-		break;
+$studentid = get_eCampus_studentid();
+if($studentid === '') {
+	// unrecoverable errors have occured
+	$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+	$PAGE->set_title(get_string('errorpagetitle','block_ecampus_tbird'));
+	echo $OUTPUT->header();
+	//the textual error explanations
+	$errorheader = get_string('erroroccured','block_ecampus_tbird');
+	$error = get_string('erroruseridnumbernotset','block_ecampus_tbird');
+	//call generic error rendering
+	echo render_eCampus_error($errorheader,$error);
+	//and log this
+	add_to_log($mcourseid, 'ecampus_tbird','error','blocks/ecampus_tbird/README.TXT',$error);
+	echo $OUTPUT->footer();
+	exit;
 }
 
 //get the course and check that user has access
@@ -105,7 +95,7 @@ if($accesscode) {
 	$PAGE->set_title(get_string('ecampuslogin','block_ecampus_tbird'));
 	echo $OUTPUT->header();
 	echo '<p>' . get_string('redirectfollowsshortly', 'block_ecampus_tbird') . '</p>';
-	echo render_eCampus_login($studentid,$accesscode,$courseid);
+	echo render_eCampus_login($studentid,$accesscode,$courseid,$isbn,$pagenumber);
 	add_to_log($mcourseid, 'ecampus_tbird','login','blocks/ecampus_tbird/README.TXT','eCampus Login');
 } else {
 	// unrecoverable errors have occured

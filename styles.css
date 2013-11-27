@@ -1,2 +1,7 @@
-.block.block_ecampus_tbird .content {padding:0;}
-.block.block_ecampus_tbird .content .no-overflow {padding:4px;}
+.block.block_ecampus_tbird .content {
+	padding: 0;
+}
+
+.block.block_ecampus_tbird .content .no-overflow {
+	padding: 4px;
+}

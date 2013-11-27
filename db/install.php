@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,19 +16,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
- *
  * @package    block
  * @subpackage ecampus_tbird
- * @copyright  Thunderbird School of Global Management
- * @author     2013 Johan Reinalda
+ * @copyright  2013 onward Johan Reinalda {@link http://www.thunderbird.edu}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2013112500;
-$plugin->requires  = 2012120300;        // Requires this Moodle version, ie 2.4
-$plugin->component = 'block_ecampus_tbird';      // Full name of the plugin (used for diagnostics)
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.1';
+
+function xmldb_block_ecampus_tbird_install() {
+	// cache definition.
+	// This defines an application wide cache, useable by every user
+	// It becomes callable as
+	// $cache = cache:make('block_ecampus_tbird','books');
+
+	$definitions = array(
+		//'persistent' => true,
+		//'staticacceleration' => true	// same as persistent after 2.4.6
+	);
+	cache::make_from_params(cache_store::MODE_APPLICATION, 'block_ecampus_tbird', 'books', $definitions);
+}
