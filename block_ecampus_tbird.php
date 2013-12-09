@@ -31,6 +31,7 @@
 class block_ecampus_tbird extends block_base {
 
 	private $books;		// array of eBooks for the course this block is rendered in
+	private $bookcount;	// number of eBooks for course
 	
 	function init() {
 		//this is the initial title for the block
@@ -39,6 +40,7 @@ class block_ecampus_tbird extends block_base {
 		//as this will be overwritten on specialization() method.
 		$this->title = get_string('pluginname', 'block_ecampus_tbird');
 		unset($this->books);
+		$this->bookcount = 0;
 	}
 
 	//make sure header is shown, with global admin title, set in language file
@@ -88,6 +90,7 @@ class block_ecampus_tbird extends block_base {
 			global $CFG;
 			require_once($CFG->dirroot.'/blocks/ecampus_tbird/lib.php');
 			$this->books = get_eCampus_booklist();
+			$this->bookcount = count($this->books);
 		}
 	}
 
@@ -105,19 +108,19 @@ class block_ecampus_tbird extends block_base {
 		$this->content = new stdClass;
 		$this->content->text = '';
 		$this->content->footer = '';
-		//make sure PHP has curl extension loaded
+		// make sure PHP has curl extension loaded
 		if (!extension_loaded('curl')) {
-			//Hmm, should not have gotten here.
+			// Hmm, should not have gotten here.
 			$this->content->text = 'Error: PHP curl extention not loaded!</br>Please notify your Moodle admin.';
 
 		} else {
-			//the eCampus pass-through page link
+			// the eCampus pass-through page link
 			$passthrough = $CFG->wwwroot.'/blocks/ecampus_tbird/passthrough.php';
-			//add "courseid" for courses
+			// add "courseid" for courses
 			global $COURSE;
 			$incourse = false;
 			if (empty($COURSE) or $COURSE->id == 1) {
-				//not in course context, but Front Page or My Moodle.
+				// not in course context, but Front Page or My Moodle.
 				$external = get_config('block_ecampus_tbird','configmyimageurl');
 				if(!empty($external)) {	//use external configured image url for 'Front Page' or 'My' block view
 					$image = $external;
@@ -125,7 +128,7 @@ class block_ecampus_tbird extends block_base {
 					$image = $CFG->wwwroot.'/blocks/ecampus_tbird/pix/mybutton.png'; //built-in image
 				}
 			} else {
-				//in course context
+				// in course context
 				$incourse = true;
 				$passthrough .= '?courseid=' . $COURSE->id;
 				$external = get_config('block_ecampus_tbird','configimageurl');
@@ -136,25 +139,28 @@ class block_ecampus_tbird extends block_base {
 				}
 			}
 
-			//show text or image link for eCampus click-through?
+			// show text or image link for eCampus click-through?
 			$linktype = get_config('block_ecampus_tbird','configlinktype');
 			$linktitle = get_config('block_ecampus_tbird','configlinktitle');
-			$text = '<p><center><a target="_blank" ';
-			if(!empty($linktitle))
-				$text .= 'title="' . $linktitle . '" ';
-			$text .= 'href="' . $passthrough . '">';
+			$booklink = get_config('block_ecampus_tbird','configshowbooklink');
+			$nologoifbook = get_config('block_ecampus_tbird','confignologoifbook');
+			$logolinktext = '';
 			if($linktype === 'text') {
-				$text .= get_config('block_ecampus_tbird','configlinktext');
+				$logolinktext .= get_config('block_ecampus_tbird','configlinktext');
 			} else {
-				//image
-				$text .= '<img src="' . $image . '">';
+				// image
+				$logolinktext .= '<img src="' . $image . '">';
 			}
-			$text .= '</a></center></p>';
-			 
-			//add direct book link, if configured
+			
+			$text = '';	// text of block
 			if($incourse) {
-				$booklink = get_config('block_ecampus_tbird','configshowbooklink');
+				// add direct book link, if configured
 				if($booklink !== 'no') {
+					if(!($nologoifbook and $this->bookcount > 0)) {
+						$text .= $this->show_ecampus_link($passthrough,$linktitle,$logolinktext);
+					} else {
+						$text .= '<br/>';
+					}
 					$text .= '<center>';
 					foreach($this->books as $book) {
 						//$text .= '<p>BOOK: ' . $book->Book->ISBN . '</p>';
@@ -185,7 +191,13 @@ class block_ecampus_tbird extends block_base {
 						if($booklink === 'text') $text .= '<br />';
 					}
 					$text .= '</center>';
+				} else {
+					// no books, but show link to eCampus anyway
+					$text .= $this->show_ecampus_link($passthrough,$linktitle,$logolinktext);
 				}
+			} else {
+				// not in course, just show eCampus logo
+				$text .= $this->show_ecampus_link($passthrough,$linktitle,$logolinktext);
 			}
 			
 			//add instance content, if allowed and set
@@ -236,4 +248,12 @@ class block_ecampus_tbird extends block_base {
 		$this->content->footer = '';
 	}
 
+	function show_ecampus_link($link,$linktitle,$linktext) {
+		$button = '<p><center><a target="_blank" ';
+		$button .= 'title="' . $linktitle . '" ';
+		$button .= 'href="' . $link . '">';
+		$button .= $linktext;
+		$button .= '</a></center></p>';
+		return $button;		
+	}
 }

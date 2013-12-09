@@ -57,6 +57,9 @@ if ($ADMIN->fulltree) {
 	$settings->add(new admin_setting_configtext('block_ecampus_tbird/configmyimageurl', get_string('configmyimageurl', 'block_ecampus_tbird'),
 			get_string('configmyimageurldescr', 'block_ecampus_tbird'),'', PARAM_RAW, 60 ));
 
+	$settings->add(new admin_setting_configcheckbox('block_ecampus_tbird/confignologoifbook', get_string('confignologoifbook', 'block_ecampus_tbird'),
+			get_string('confignologoifbookdescr', 'block_ecampus_tbird'), 1));
+	
 	$settings->add(new admin_setting_configselect('block_ecampus_tbird/configshowbooklink',get_string('configshowbooklink', 'block_ecampus_tbird'),
 			get_string('configshowbooklinkdescr', 'block_ecampus_tbird'),
 			'text',
@@ -116,7 +119,6 @@ if ($ADMIN->fulltree) {
 			array(	'idnumber' => get_string('courseidtypeidnumber', 'block_ecampus_tbird'),
 					'shortname' => get_string('courseidtypeshortname', 'block_ecampus_tbird'))
 	));
-
 	
 	//connection and debugging settings
 	$settings->add(new admin_setting_heading('debugdefaults', get_string('debugsettings', 'block_ecampus_tbird'), get_string('configdebugsettings', 'block_ecampus_tbird')));

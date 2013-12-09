@@ -148,9 +148,12 @@ function render_eCampus_login($studentid,$accesscode, $courseid=0, $isbn=0, $pag
 			$s .= '<input type="hidden" name="page" value="' . $page . '" />';
 		}
 	}
-	if(!$gotomyaccount and !$isbn) {
-		// land on bookshelf, instead of 'My Account' page
-		$s .= '<input type="hidden" name="defaultpage" value="ebookshelf" />';	//<!-- Specify ebookshelf for default page if you want them to land on their ebooks page after the auto login occurs.  If this value is not provided, student will land on default my account landing page.  -->
+	if(!$gotomyaccount) {
+		// land on bookshelf, instead of 'My Account' page.
+		// Specify ebookshelf for default page if you want them to land on their ebooks page
+		// after the auto login occurs.  If this value is not provided, student will land on
+		// default my account landing page (even if $isbn or $page are set!)
+		$s .= '<input type="hidden" name="defaultpage" value="ebookshelf" />';
 	}
 	if($courseid) {
 		//if course id given, we will go to the books for that specific course, instead of all books in bookshelf

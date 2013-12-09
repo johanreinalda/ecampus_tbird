@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2013112500;
+$plugin->version = 2013120900;
 $plugin->requires  = 2012120300;        // Requires this Moodle version, ie 2.4
 $plugin->component = 'block_ecampus_tbird';      // Full name of the plugin (used for diagnostics)
 $plugin->maturity = MATURITY_STABLE;
